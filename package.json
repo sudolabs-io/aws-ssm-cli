@@ -1,6 +1,6 @@
 {
   "name": "@sudolabs-io/aws-ssm-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command line tool for AWS Systems Manager Parameter Store",
   "keywords": [
     "AWS",
