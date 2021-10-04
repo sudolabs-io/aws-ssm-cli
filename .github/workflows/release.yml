@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: semantic-release
+      - name: Semantic Release
         run: npx semantic-release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
