@@ -1,6 +1,6 @@
 # AWS SSM CLI
 
-![main workflow](https://github.com/sudolabs-io/aws-ssm-cli/actions/workflows/release.yml/badge.svg) ![npm](https://img.shields.io/npm/v/@sudolabs-io/aws-ssm-cli) ![npm](https://img.shields.io/npm/dm/@sudolabs-io/aws-ssm-cli)
+![release workflow](https://github.com/sudolabs-io/aws-ssm-cli/actions/workflows/release.yml/badge.svg) ![npm](https://img.shields.io/npm/v/@sudolabs-io/aws-ssm-cli) ![npm](https://img.shields.io/npm/dm/@sudolabs-io/aws-ssm-cli)
 
 ```
 Usage:
