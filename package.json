@@ -19,16 +19,22 @@
   "bin": {
     "ssm": "./src/index.mjs"
   },
-  "scripts": {},
+  "scripts": {
+    "prepare": "husky install"
+  },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.34.0",
     "dotenv": "^10.0.0",
     "meow": "^10.1.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
     "@sudolabs-io/eslint-config-sudolabs": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
@@ -38,6 +44,8 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "prettier": "^2.4.1"
+    "husky": "^7.0.2",
+    "prettier": "^2.4.1",
+    "semantic-release": "^18.0.0"
   }
 }
