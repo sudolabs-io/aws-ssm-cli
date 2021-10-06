@@ -13,6 +13,34 @@ function createClient({ region, accessKeyId, secretAccessKey }) {
   return new SSMClient({ region, credentials })
 }
 
+async function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+function addThrottleMiddleware(client, { batchSize, wait }) {
+  let currentBatchSize = 0
+
+  // https://aws.amazon.com/blogs/developer/middleware-stack-modular-aws-sdk-js/
+  client.middlewareStack.add(
+    (next) => async (args) => {
+      if (currentBatchSize > batchSize) {
+        currentBatchSize = 0
+
+        await delay(wait)
+      }
+
+      currentBatchSize++
+
+      return await next(args)
+    },
+    {
+      step: 'initialize',
+    }
+  )
+
+  return client
+}
+
 export async function pullParameters({ prefix, ...config }) {
   const paginator = paginateGetParametersByPath(
     {
@@ -39,9 +67,15 @@ export async function pullParameters({ prefix, ...config }) {
   )
 }
 
+/**
+ * Parameters are sent one by one with 1 second delay after each 10 requests to avoid `ThrottlingException: Rate exceeded`.
+ * See docs:
+ * https://aws.amazon.com/premiumsupport/knowledge-center/ssm-parameter-store-rate-exceeded/
+ * https://docs.aws.amazon.com/general/latest/gr/ssm.html#limits_ssm
+ */
 export async function pushParameters({ prefix, file, ...config }) {
   const parameters = parseDotenv(file)
-  const client = createClient(config)
+  const client = addThrottleMiddleware(createClient(config), { batchSize: 10, wait: 1000 })
 
   const putCommands = Object.entries(parameters).map(
     ([name, value]) =>
@@ -53,5 +87,7 @@ export async function pushParameters({ prefix, file, ...config }) {
       })
   )
 
-  await Promise.all(putCommands.map((putCommand) => client.send(putCommand)))
+  for (const putCommand of putCommands) {
+    await client.send(putCommand)
+  }
 }
