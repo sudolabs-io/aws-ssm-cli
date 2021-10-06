@@ -1,4 +1,5 @@
 import { SSMClient, paginateGetParametersByPath, PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
+import sortBy from 'lodash.sortby'
 import { parseDotenv } from './dotenv.mjs'
 
 function createClient({ region, accessKeyId, secretAccessKey }) {
@@ -58,7 +59,7 @@ export async function pullParameters({ prefix, ...config }) {
     parameterList.push(...page.Parameters)
   }
 
-  return parameterList.reduce(
+  return sortBy(parameterList, 'Name').reduce(
     (parameters, { Name, Value }) => ({
       ...parameters,
       [Name.substr(prefix.length)]: Value,
