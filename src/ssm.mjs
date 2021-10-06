@@ -1,4 +1,4 @@
-import { SSMClient, GetParametersByPathCommand, PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
+import { SSMClient, paginateGetParametersByPath, PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
 import { parseDotenv } from './dotenv.mjs'
 
 function createClient({ region, accessKeyId, secretAccessKey }) {
@@ -14,16 +14,21 @@ function createClient({ region, accessKeyId, secretAccessKey }) {
 }
 
 export async function pullParameters({ prefix, ...config }) {
-  const client = createClient(config)
+  const paginator = paginateGetParametersByPath(
+    {
+      client: createClient(config),
+    },
+    {
+      Path: prefix,
+      Recursive: true,
+      WithDecryption: true,
+    }
+  )
 
-  const command = new GetParametersByPathCommand({
-    Path: prefix,
-    Recursive: true,
-    WithDecryption: true,
-  })
-
-  const { Parameters } = await client.send(command)
-  const parameterList = Parameters ?? []
+  const parameterList = []
+  for await (const page of paginator) {
+    parameterList.push(...page.Parameters)
+  }
 
   return parameterList.reduce(
     (parameters, { Name, Value }) => ({
