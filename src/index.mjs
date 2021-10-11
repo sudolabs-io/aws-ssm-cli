@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import meow from 'meow'
-import { pullParameters, pushParameters } from './ssm.mjs'
+import { pullParameters } from './pull.mjs'
+import { pushParameters } from './push.mjs'
 import { toDotenvString } from './dotenv.mjs'
 
 const COMMANDS = {

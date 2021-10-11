@@ -28,7 +28,7 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.35.0",
     "dotenv": "^10.0.0",
-    "lodash.sortby": "^4.7.0",
+    "lodash": "^4.17.21",
     "meow": "^10.1.1"
   },
   "devDependencies": {
