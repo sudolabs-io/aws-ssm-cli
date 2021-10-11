@@ -23,6 +23,3 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Disable Husky in CI
-          # https://typicode.github.io/husky/#/?id=with-env-variables
-          HUSKY: 0

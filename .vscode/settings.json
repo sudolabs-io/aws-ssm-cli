@@ -8,7 +8,6 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     // Project specific excludes:
-    "**/node_modules": true,
-    ".husky": true
+    "**/node_modules": true
   }
 }

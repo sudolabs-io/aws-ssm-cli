@@ -1,7 +1,0 @@
-{
-  "extends": ["@sudolabs-io/eslint-config-sudolabs/javascript", "@sudolabs-io/eslint-config-sudolabs/with/prettier"],
-  "env": {
-    "es2022": true,
-    "node": true
-  }
-}
