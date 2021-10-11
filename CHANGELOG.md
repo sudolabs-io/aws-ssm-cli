@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.1.0...v1.2.0) (2021-10-11)
+
+
+### Features
+
+* **push:** push only updated parameters ([00015d7](https://github.com/sudolabs-io/aws-ssm-cli/commit/00015d7e3a3cfb1d08f1fff029553a9a0ec1ae43))
+
 # [1.1.0](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.0.1...v1.1.0) (2021-10-06)
 
 
