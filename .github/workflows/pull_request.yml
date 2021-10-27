@@ -1,9 +1,10 @@
-name: Commitlint
+name: Pull Request
 
 on: pull_request
 
 jobs:
-  publish:
+  pull_request:
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
