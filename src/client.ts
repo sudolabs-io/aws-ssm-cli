@@ -1,5 +1,5 @@
 import { SSMClient } from '@aws-sdk/client-ssm'
-import { ClientConfig } from './types.js'
+import { ClientConfig } from './types'
 
 export function createClient({ region, accessKeyId, secretAccessKey }: ClientConfig) {
   const credentials =

@@ -1,7 +1,6 @@
 import fs from 'fs'
-import path from 'path'
 import dotenv from 'dotenv'
-import { Parameters } from './types.js'
+import { Parameters } from './types'
 
 export function toDotenvString(parameters: Parameters): string {
   return Object.entries(parameters)
@@ -10,8 +9,7 @@ export function toDotenvString(parameters: Parameters): string {
 }
 
 export function parseDotenv(file: string): Parameters {
-  const filePath = path.resolve(process.cwd(), file)
-  const data = fs.readFileSync(filePath)
+  const data = fs.readFileSync(file)
 
   return dotenv.parse(data)
 }

@@ -1,94 +1,105 @@
 #!/usr/bin/env node
-import meow from 'meow'
-import { pullParameters } from './pull.js'
-import { pushParameters } from './push.js'
-import { toDotenvString } from './dotenv.js'
+import fs from 'fs'
+import path from 'path'
+import { Options } from 'yargs'
+import yargs from 'yargs/yargs'
+import { hideBin } from 'yargs/helpers'
+import { Pull, pullParameters } from './pull'
+import { Push, pushParameters } from './push'
+import { toDotenvString } from './dotenv'
 
-const COMMANDS = {
-  pull: 'pull',
-  push: 'push',
+const sharedOptions: Record<string, Options> = {
+  region: {
+    type: 'string',
+    describe: 'AWS Region',
+  },
+  'access-key-id': {
+    type: 'string',
+    describe: 'AWS Access Key ID',
+  },
+  'secret-access-key': {
+    type: 'string',
+    describe: 'AWS Secret Access Key',
+  },
 }
 
-const cli = meow(
-  `
-	Usage:
-    $ ssm pull --prefix='/<PROJECT>/<ENVIRONMENT>/'
-    $ ssm push --file=.env
-    $ ssm --help
-    $ ssm --version
-
-	Options:
-    --region             AWS Region
-    --access-key-id      AWS Access Key ID
-    --secret-access-key  AWS Secret Access Key
-
-  Pull Options:
-    --prefix, -p         Pull variables starting with prefix
-    --json               Format \`pull\` output as JSON
-
-  Push Options:
-    --prefix, -p         Push variables with prefix
-    --file, -f           Dotenv file to upload variables from
-`,
-  {
-    importMeta: import.meta,
-    flags: {
-      region: {
-        type: 'string',
-      },
-      accessKeyId: {
-        type: 'string',
-        isRequired: (flags) => Boolean(flags.secretAccessKey),
-      },
-      secretAccessKey: {
-        type: 'string',
-        isRequired: (flags) => Boolean(flags.accessKeyId),
-      },
-      prefix: {
-        type: 'string',
-        alias: 'p',
-        isRequired: true,
-      },
-      // Pull flags
-      json: {
-        type: 'boolean',
-        default: false,
-      },
-      // Push flags
-      file: {
-        type: 'string',
-        alias: 'f',
-        isRequired: (_, [command]) => command === COMMANDS.push,
-      },
+yargs(hideBin(process.argv))
+  .command({
+    command: 'push',
+    describe: 'Push environment variables to AWS SSM Parameter Store',
+    builder: (y) =>
+      y.options({
+        prefix: {
+          alias: 'p',
+          type: 'string',
+          describe: 'Push variables with prefix',
+          demandOption: true,
+        },
+        file: {
+          alias: 'f',
+          type: 'string',
+          describe: 'Dotenv file with variables',
+          coerce: (file) => path.resolve(process.cwd(), file),
+          demandOption: true,
+        },
+        ...sharedOptions,
+      }),
+    handler: async (pushArgs: Push) => {
+      await pushParameters(pushArgs)
     },
-  }
-)
+  })
+  .command({
+    command: 'pull',
+    describe: 'Pull environment variables from AWS SSM Parameter Store',
+    builder: (y) =>
+      y.options({
+        prefix: {
+          alias: 'p',
+          type: 'string',
+          describe: 'Pull variables starting with prefix',
+          demandOption: true,
+        },
+        json: {
+          type: 'boolean',
+          default: true,
+          describe: 'Format `pull` output as JSON',
+        },
+        ...sharedOptions,
+      }),
+    handler: async (pullArgs: Pull & { json: boolean }) => {
+      const parameters = await pullParameters(pullArgs)
 
-async function execute() {
-  const {
-    input: [command],
-    flags,
-  } = cli
-
-  if (command === COMMANDS.pull) {
-    const parameters = await pullParameters(flags)
-
-    if (flags.json) {
-      console.log(JSON.stringify(parameters))
-    } else {
-      console.log(toDotenvString(parameters))
+      if (pullArgs.json) {
+        console.log(JSON.stringify(parameters))
+      } else {
+        console.log(toDotenvString(parameters))
+      }
+    },
+  })
+  .check(({ prefix, file }) => {
+    if (prefix) {
+      if (!prefix.startsWith('/')) {
+        throw new Error('prefix must start with slash "/"')
+      }
+      if (!prefix.endsWith('/')) {
+        throw new Error('prefix must end with slash "/"')
+      }
     }
-  } else if (command === COMMANDS.push && flags.file) {
-    const pushParams = {
-      ...flags,
-      // make Typescript happy
-      file: flags.file ?? '',
+
+    if (file && !fs.existsSync(file)) {
+      throw new Error(`file ${file} does not exist`)
     }
 
-    await pushParameters(pushParams)
-  } else {
-    cli.showHelp()
-  }
-}
-
-execute()
+    return true
+  })
+  .example([
+    [
+      'push --prefix="/<project>/<environment>/" --file=".env"',
+      'Push environment variables stored in .env file with prefix',
+    ],
+    ['pull --prefix="/<project>/<environment>/" --json', 'Pull environment variables by prefix'],
+  ])
+  .alias({ h: 'help', v: 'version' })
+  .demandCommand()
+  .strictCommands()
+  .strictOptions().argv

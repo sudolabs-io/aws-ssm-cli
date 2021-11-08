@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { SSMClient, PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
-import { parseDotenv } from './dotenv.js'
-import { createClient, addThrottleMiddleware } from './client.js'
-import { pullParameters } from './pull.js'
-import { ClientConfig, Parameters } from './types.js'
+import { parseDotenv } from './dotenv'
+import { createClient, addThrottleMiddleware } from './client'
+import { pullParameters } from './pull'
+import { ClientConfig, Parameters } from './types'
 
 interface Analyze {
   client: SSMClient
@@ -71,7 +71,7 @@ function printStat({ total, skipped, updated, created }: Stat) {
   )
 }
 
-interface Push extends ClientConfig {
+export interface Push extends ClientConfig {
   prefix: string
   file: string
 }

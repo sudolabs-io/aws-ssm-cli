@@ -19,10 +19,6 @@
   },
   "license": "MIT",
   "author": "poikaa",
-  "type": "module",
-  "engines": {
-    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-  },
   "bin": {
     "ssm": "./dist/index.js"
   },
@@ -34,7 +30,7 @@
     "@aws-sdk/client-ssm": "^3.35.0",
     "dotenv": "^10.0.0",
     "lodash": "^4.17.21",
-    "meow": "^10.1.1"
+    "yargs": "^17.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",
@@ -43,6 +39,7 @@
     "@semantic-release/git": "^10.0.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^16.11.6",
+    "@types/yargs": "^17.0.5",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^7.0.2",
     "prettier": "^2.4.1",

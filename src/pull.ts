@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { SSMClient, paginateGetParametersByPath } from '@aws-sdk/client-ssm'
-import { createClient } from './client.js'
-import { ClientConfig, Parameters } from './types.js'
+import { createClient } from './client'
+import { ClientConfig, Parameters } from './types'
 
-interface Pull extends ClientConfig {
+export interface Pull extends ClientConfig {
   client?: SSMClient
   prefix: string
 }
