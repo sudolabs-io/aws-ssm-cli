@@ -1,26 +1,65 @@
 # AWS SSM CLI
 
+Command line utility for managing environment variables in AWS Systems Manager Parameter Store.
+
 [npm]: https://npmjs.com/@sudolabs-io/aws-ssm-cli
 
 ![release workflow](https://github.com/sudolabs-io/aws-ssm-cli/actions/workflows/release.yml/badge.svg) [![npm](https://img.shields.io/npm/v/@sudolabs-io/aws-ssm-cli)][npm] [![npm](https://img.shields.io/npm/dm/@sudolabs-io/aws-ssm-cli)][npm]
 
+## Examples
+
+### Push
+
+Imagine having `.env` file with content:
+
 ```
-Usage:
-  $ ssm pull --prefix='/<PROJECT>/<ENVIRONMENT>/'
-  $ ssm push --file=.env
-  $ ssm --help
-  $ ssm --version
+DBNAME=postgres
+DBUSER=postgres
+```
 
-Options:
-  --region             AWS Region
-  --access-key-id      AWS Access Key ID
-  --secret-access-key  AWS Secret Access Key
+To push environment variables into AWS SSM Parameter Store run:
 
-Pull Options:
-  --prefix, -p         Pull variables starting with prefix
-  --json               Format `pull` output as JSON
+```
+$ ssm push --prefix="/<project>/<environment>/" --file=".env"
+   0 up-to-date
+ ~ 0 updated
+ + 2 created
+```
 
-Push Options:
-  --prefix, -p         Push variables with prefix
-  --file, -f           Dotenv file to upload variables from
+### Pull
+
+Pull environment variables from AWS SSM Parameter Store:
+
+```
+$ ssm pull --prefix="/<project>/<environment>/"
+DBNAME=postgres
+DBUSER=postgres
+```
+
+Pull environment variables from AWS SSM Parameter Store as JSON:
+
+```
+$ ssm pull --prefix="/<project>/<environment>/" --json
+{ "DBNAME": "postgres", "DBUSER": "postgres" }
+```
+
+Pull environment variables from AWS SSM Parameter Store as JSON object with predefined key:
+
+```
+$ ssm pull --prefix="/<project>/<environment>/" --json --group="environment_variables"
+{ "environment_variables": { "DBNAME": "postgres", "DBUSER": "postgres" } }
+```
+
+### More
+
+Show help:
+
+```
+$ ssm --help
+```
+
+Show version:
+
+```
+$ ssm --version
 ```
