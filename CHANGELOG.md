@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.2.0...v1.3.0) (2021-11-08)
+
+
+### Features
+
+* **pull:** add ability to group JSON output into object ([4639fb7](https://github.com/sudolabs-io/aws-ssm-cli/commit/4639fb7568f729f43bea32b0ff1a8a8b20f580ca))
+
 # [1.2.0](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.1.0...v1.2.0) (2021-10-11)
 
 
