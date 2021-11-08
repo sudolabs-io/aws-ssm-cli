@@ -75,7 +75,7 @@ yargs(hideBin(process.argv))
 
       if (json) {
         const jsonParameters = group ? { [group]: parameters } : parameters
-        console.log(jsonParameters)
+        console.log(JSON.stringify(jsonParameters))
       } else {
         console.log(toDotenvString(parameters))
       }
