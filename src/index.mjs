@@ -14,6 +14,8 @@ const cli = meow(
 	Usage:
     $ ssm pull --prefix='/<PROJECT>/<ENVIRONMENT>/'
     $ ssm push --file=.env
+    $ ssm --help
+    $ ssm --version
 
 	Options:
     --region             AWS Region
@@ -24,7 +26,7 @@ const cli = meow(
     --prefix, -p         Pull variables starting with prefix
     --json               Format \`pull\` output as JSON
 
-    Push Options:
+  Push Options:
     --prefix, -p         Push variables with prefix
     --file, -f           Dotenv file to upload variables from
 `,
