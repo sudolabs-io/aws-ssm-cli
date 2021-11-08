@@ -8,7 +8,7 @@ import { Pull, pullParameters } from './pull'
 import { Push, pushParameters } from './push'
 import { toDotenvString } from './dotenv'
 
-const sharedOptions: Record<string, Options> = {
+const clientOptions: Record<string, Options> = {
   region: {
     type: 'string',
     describe: 'AWS Region',
@@ -29,6 +29,7 @@ yargs(hideBin(process.argv))
     describe: 'Push environment variables to AWS SSM Parameter Store',
     builder: (y) =>
       y.options({
+        ...clientOptions,
         prefix: {
           alias: 'p',
           type: 'string',
@@ -42,7 +43,6 @@ yargs(hideBin(process.argv))
           coerce: (file) => path.resolve(process.cwd(), file),
           demandOption: true,
         },
-        ...sharedOptions,
       }),
     handler: async (pushArgs: Push) => {
       await pushParameters(pushArgs)
@@ -53,6 +53,7 @@ yargs(hideBin(process.argv))
     describe: 'Pull environment variables from AWS SSM Parameter Store',
     builder: (y) =>
       y.options({
+        ...clientOptions,
         prefix: {
           alias: 'p',
           type: 'string',
@@ -61,16 +62,20 @@ yargs(hideBin(process.argv))
         },
         json: {
           type: 'boolean',
-          default: true,
           describe: 'Format `pull` output as JSON',
         },
-        ...sharedOptions,
+        group: {
+          type: 'string',
+          describe: 'Group environment variables as keys of an object',
+          implies: 'json',
+        },
       }),
-    handler: async (pullArgs: Pull & { json: boolean }) => {
+    handler: async ({ json, group, ...pullArgs }: Pull & { json?: boolean; group?: string }) => {
       const parameters = await pullParameters(pullArgs)
 
-      if (pullArgs.json) {
-        console.log(JSON.stringify(parameters))
+      if (json) {
+        const jsonParameters = group ? { [group]: parameters } : parameters
+        console.log(jsonParameters)
       } else {
         console.log(toDotenvString(parameters))
       }
@@ -92,6 +97,9 @@ yargs(hideBin(process.argv))
 
     return true
   })
+  .alias({ h: 'help', v: 'version' })
+  .group(['help', 'version'], '')
+  .group(Object.keys(clientOptions), 'Client Options:')
   .example([
     [
       'push --prefix="/<project>/<environment>/" --file=".env"',
@@ -99,7 +107,6 @@ yargs(hideBin(process.argv))
     ],
     ['pull --prefix="/<project>/<environment>/" --json', 'Pull environment variables by prefix'],
   ])
-  .alias({ h: 'help', v: 'version' })
   .demandCommand()
   .strictCommands()
   .strictOptions().argv
