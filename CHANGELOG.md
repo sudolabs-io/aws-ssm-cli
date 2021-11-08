@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.0...v1.3.1) (2021-11-08)
+
+
+### Bug Fixes
+
+* **pull:** stringify parameters when --json option provided ([22ed0e3](https://github.com/sudolabs-io/aws-ssm-cli/commit/22ed0e34d26aabe433a99ae55f659dafa9b88dc6))
+
 # [1.3.0](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.2.0...v1.3.0) (2021-11-08)
 
 
