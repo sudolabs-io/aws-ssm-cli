@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import meow from 'meow'
-import { pullParameters } from './pull.mjs'
-import { pushParameters } from './push.mjs'
-import { toDotenvString } from './dotenv.mjs'
+import { pullParameters } from './pull.js'
+import { pushParameters } from './push.js'
+import { toDotenvString } from './dotenv.js'
 
 const COMMANDS = {
   pull: 'pull',
@@ -32,7 +32,6 @@ const cli = meow(
 `,
   {
     importMeta: import.meta,
-    input: Object.values(COMMANDS),
     flags: {
       region: {
         type: 'string',
@@ -65,21 +64,31 @@ const cli = meow(
   }
 )
 
-const {
-  input: [command],
-  flags,
-} = cli
+async function execute() {
+  const {
+    input: [command],
+    flags,
+  } = cli
 
-if (command === COMMANDS.pull) {
-  const parameters = await pullParameters(flags)
+  if (command === COMMANDS.pull) {
+    const parameters = await pullParameters(flags)
 
-  if (flags.json) {
-    console.log(JSON.stringify(parameters))
+    if (flags.json) {
+      console.log(JSON.stringify(parameters))
+    } else {
+      console.log(toDotenvString(parameters))
+    }
+  } else if (command === COMMANDS.push && flags.file) {
+    const pushParams = {
+      ...flags,
+      // make Typescript happy
+      file: flags.file ?? '',
+    }
+
+    await pushParameters(pushParams)
   } else {
-    console.log(toDotenvString(parameters))
+    cli.showHelp()
   }
-} else if (command === COMMANDS.push) {
-  await pushParameters(flags)
-} else {
-  cli.showHelp()
 }
+
+execute()

@@ -1,10 +1,17 @@
 import _ from 'lodash'
-import { PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
-import { parseDotenv } from './dotenv.mjs'
-import { createClient, addThrottleMiddleware } from './client.mjs'
-import { pullParameters } from './pull.mjs'
+import { SSMClient, PutParameterCommand, ParameterType } from '@aws-sdk/client-ssm'
+import { parseDotenv } from './dotenv.js'
+import { createClient, addThrottleMiddleware } from './client.js'
+import { pullParameters } from './pull.js'
+import { ClientConfig, Parameters } from './types.js'
 
-async function analyze({ client, prefix, file }) {
+interface Analyze {
+  client: SSMClient
+  prefix: string
+  file: string
+}
+
+async function analyze({ client, prefix, file }: Analyze) {
   const parsedParameters = parseDotenv(file)
 
   const remoteParameters = await pullParameters({ client, prefix })
@@ -15,7 +22,7 @@ async function analyze({ client, prefix, file }) {
 
   const parametersToUpdate = _.reduce(
     parsedParameters,
-    (toUpdate, value, name) => {
+    (toUpdate: Parameters, value, name) => {
       if (_.has(remoteParameters, name)) {
         if (remoteParameters[name] === value) {
           skipped++
@@ -42,17 +49,31 @@ async function analyze({ client, prefix, file }) {
   }
 }
 
-function printStat({ total, skipped, updated, created }) {
-  const padSize = _.max([skipped, updated, created]).toString().length
+type Stat = {
+  total: number
+  skipped: number
+  updated: number
+  created: number
+}
+
+function printStat({ total, skipped, updated, created }: Stat) {
+  const padSize = _.max([skipped, updated, created])?.toString().length
+
+  const padStart = (n: number) => _.padStart(n.toString(), padSize)
 
   console.log(
     [
       `Total ${total} of parameters:`,
-      `  ${_.padStart(skipped, padSize)} up-to-date`,
-      `~ ${_.padStart(updated, padSize)} updated`,
-      `+ ${_.padStart(created, padSize)} created`,
+      `  ${padStart(skipped)} up-to-date`,
+      `~ ${padStart(updated)} updated`,
+      `+ ${padStart(created)} created`,
     ].join('\n')
   )
+}
+
+interface Push extends ClientConfig {
+  prefix: string
+  file: string
 }
 
 /**
@@ -61,7 +82,7 @@ function printStat({ total, skipped, updated, created }) {
  * https://aws.amazon.com/premiumsupport/knowledge-center/ssm-parameter-store-rate-exceeded/
  * https://docs.aws.amazon.com/general/latest/gr/ssm.html#limits_ssm
  */
-export async function pushParameters({ prefix, file, ...config }) {
+export async function pushParameters({ prefix, file, ...config }: Push): Promise<void> {
   const client = createClient(config)
 
   const { parameters, ...stat } = await analyze({ client, prefix, file })

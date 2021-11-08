@@ -1,6 +1,7 @@
 import { SSMClient } from '@aws-sdk/client-ssm'
+import { ClientConfig } from './types.js'
 
-export function createClient({ region, accessKeyId, secretAccessKey }) {
+export function createClient({ region, accessKeyId, secretAccessKey }: ClientConfig) {
   const credentials =
     accessKeyId && secretAccessKey
       ? {
@@ -12,11 +13,16 @@ export function createClient({ region, accessKeyId, secretAccessKey }) {
   return new SSMClient({ region, credentials })
 }
 
-async function delay(time) {
+async function delay(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
 
-export function addThrottleMiddleware(client, { batchSize, wait }) {
+type ThrottleConfig = {
+  batchSize: number
+  wait: number
+}
+
+export function addThrottleMiddleware(client: SSMClient, { batchSize, wait }: ThrottleConfig) {
   let currentBatchSize = 0
 
   // https://aws.amazon.com/blogs/developer/middleware-stack-modular-aws-sdk-js/
