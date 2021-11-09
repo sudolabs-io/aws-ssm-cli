@@ -22,6 +22,10 @@
   "bin": {
     "ssm": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "prepare": "husky install",
     "build": "tsc --build"
