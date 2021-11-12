@@ -87,7 +87,7 @@ export async function pushParameters({ prefix, file, ...config }: Push): Promise
 
   const { parameters, ...stat } = await analyze({ client, prefix, file })
 
-  addThrottleMiddleware(client, { batchSize: 10, wait: 1000 })
+  addThrottleMiddleware(client, { batchSize: 10, wait: 1_000 })
 
   const putCommands = _.map(
     parameters,
