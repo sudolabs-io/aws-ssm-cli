@@ -1,1 +1,7 @@
 * @poikaa
+
+# CODEOWNERS prevent Renovate automerge since it will automatically ask for review
+# See documentation for more details: https://docs.renovatebot.com/automerge-configuration/
+# Solution: make files used by renovate owned by everyone
+package.json
+package-lock.json
