@@ -1,7 +1,7 @@
 import { SSMClient } from '@aws-sdk/client-ssm'
 import { ClientConfig } from './types'
 
-export function createClient({ region, accessKeyId, secretAccessKey }: ClientConfig) {
+export function createClient({ region, accessKeyId, secretAccessKey }: ClientConfig = {}) {
   const credentials =
     accessKeyId && secretAccessKey
       ? {
@@ -13,7 +13,7 @@ export function createClient({ region, accessKeyId, secretAccessKey }: ClientCon
   return new SSMClient({ region, credentials })
 }
 
-async function delay(time: number) {
+export async function delay(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
 
