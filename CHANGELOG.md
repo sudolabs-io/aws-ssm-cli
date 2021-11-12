@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.1...v1.3.2) (2021-11-12)
+
+
+### Bug Fixes
+
+* **deps:** pin dependencies ([1a8f264](https://github.com/sudolabs-io/aws-ssm-cli/commit/1a8f264fd27035ca5367db41842b036972f9c6c7))
+
 ## [1.3.1](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.0...v1.3.1) (2021-11-08)
 
 
