@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs'
 import path from 'path'
-import { Options } from 'yargs'
+import { ArgumentsCamelCase, Options } from 'yargs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 import { Pull, pullParameters } from './pull'
@@ -44,7 +44,7 @@ yargs(hideBin(process.argv))
           demandOption: true,
         },
       }),
-    handler: async (pushArgs: Push) => {
+    handler: async (pushArgs: ArgumentsCamelCase<Push>) => {
       await pushParameters(pushArgs)
     },
   })
@@ -70,7 +70,7 @@ yargs(hideBin(process.argv))
           implies: 'json',
         },
       }),
-    handler: async ({ json, group, ...pullArgs }: Pull & { json?: boolean; group?: string }) => {
+    handler: async ({ json, group, ...pullArgs }: ArgumentsCamelCase<Pull & { json?: boolean; group?: string }>) => {
       const parameters = await pullParameters(pullArgs)
 
       if (json) {
@@ -82,7 +82,7 @@ yargs(hideBin(process.argv))
     },
   })
   .check(({ prefix, file }) => {
-    if (prefix) {
+    if (typeof prefix === 'string') {
       if (!prefix.startsWith('/')) {
         throw new Error('prefix must start with slash "/"')
       }
@@ -91,7 +91,7 @@ yargs(hideBin(process.argv))
       }
     }
 
-    if (file && !fs.existsSync(file)) {
+    if (typeof file === 'string' && !fs.existsSync(file)) {
       throw new Error(`file ${file} does not exist`)
     }
 
