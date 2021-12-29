@@ -1,3 +1,11 @@
+## [1.3.8](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.7...v1.3.8) (2021-12-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-ssm to v3.45.0 ([21321b1](https://github.com/sudolabs-io/aws-ssm-cli/commit/21321b1e9b724423b03d9474df5c3fff0c12587a))
+* **deps:** update dependency yargs to v17.3.1 ([367dade](https://github.com/sudolabs-io/aws-ssm-cli/commit/367dade9b7f526132d68f25ca131c07398d7e3c6))
+
 ## [1.3.7](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.6...v1.3.7) (2021-12-02)
 
 
