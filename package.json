@@ -45,7 +45,7 @@
     "@types/jest": "27.4.1",
     "@types/lodash": "4.14.180",
     "@types/node": "16.11.26",
-    "@types/yargs": "17.0.9",
+    "@types/yargs": "17.0.10",
     "cz-conventional-changelog": "3.3.0",
     "husky": "7.0.4",
     "jest": "27.5.1",
