@@ -1,3 +1,10 @@
+## [1.3.64](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.63...v1.3.64) (2022-07-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @aws-sdk/client-ssm to v3.128.0 ([421c367](https://github.com/sudolabs-io/aws-ssm-cli/commit/421c367281d10986f979dbfb5153293a91073ee1))
+
 ## [1.3.63](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.62...v1.3.63) (2022-07-11)
 
 
