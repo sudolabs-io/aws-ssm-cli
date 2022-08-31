@@ -32,7 +32,7 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "3.161.0",
+    "@aws-sdk/client-ssm": "3.162.0",
     "dotenv": "16.0.2",
     "lodash": "4.17.21",
     "yargs": "17.5.1"
