@@ -35,7 +35,7 @@
     "@aws-sdk/client-ssm": "3.181.0",
     "dotenv": "16.0.3",
     "lodash": "4.17.21",
-    "yargs": "17.5.1"
+    "yargs": "17.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "16.3.0",
