@@ -44,7 +44,7 @@
     "@semantic-release/git": "10.0.1",
     "@types/jest": "27.5.2",
     "@types/lodash": "4.14.186",
-    "@types/node": "16.11.64",
+    "@types/node": "16.11.65",
     "@types/yargs": "17.0.13",
     "cz-conventional-changelog": "3.3.0",
     "husky": "7.0.4",
