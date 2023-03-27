@@ -43,7 +43,7 @@
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
     "@types/jest": "27.5.2",
-    "@types/lodash": "4.14.191",
+    "@types/lodash": "4.14.192",
     "@types/node": "16.18.21",
     "@types/yargs": "17.0.23",
     "cz-conventional-changelog": "3.3.0",
