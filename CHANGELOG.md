@@ -1,3 +1,10 @@
+## [1.3.149](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.148...v1.3.149) (2025-08-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency dotenv to v16.6.1 ([d4c3fc6](https://github.com/sudolabs-io/aws-ssm-cli/commit/d4c3fc626ef6339c116d3aa22b42ce6583be1801))
+
 ## [1.3.148](https://github.com/sudolabs-io/aws-ssm-cli/compare/v1.3.147...v1.3.148) (2025-08-15)
 
 
