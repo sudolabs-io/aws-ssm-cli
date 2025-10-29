@@ -1,43 +1,40 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { DeleteParametersCommand } from '@aws-sdk/client-ssm'
-import { createClient, delay } from '../src/client'
+import dotenv from 'dotenv'
+import { delay } from '../src/client'
+import { deleteParameters } from '../src/delete'
 import { pushParameters } from '../src/push'
 import { pullParameters } from '../src/pull'
 
-const prefix = process.env.SSM_TEST_PREFIX || '/cli/test/'
-
-function readCredentialsFromFile(): { accessKeyId: string; secretAccessKey: string } | undefined {
-  try {
-    const credsPath = path.resolve(__dirname, 'aws-access-key.txt')
-    const text = fs.readFileSync(credsPath, 'utf8')
-    const accessKeyId = text.match(/Access Key:\s*(\S+)/)?.[1]
-    const secretAccessKey = text.match(/Secret Access Key:\s*(\S+)/)?.[1]
-    if (accessKeyId && secretAccessKey) {
-      return { accessKeyId, secretAccessKey }
-    }
-  } catch (_) {
-    // ignore
-  }
-  return undefined
+interface TestEnv {
+  AWS_REGION?: string
+  AWS_ACCESS_KEY_ID?: string
+  AWS_SECRET_ACCESS_KEY?: string
+  SSM_TEST_PREFIX?: string
 }
 
-function getAwsConfig(): { region: string; accessKeyId: string; secretAccessKey: string } | undefined {
-  const region = process.env.AWS_REGION
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
-
-  if (region && accessKeyId && secretAccessKey) {
-    return { region, accessKeyId, secretAccessKey }
+function loadRunEnv(): TestEnv {
+  try {
+    const envPath = path.resolve(__dirname, '.env.run.test')
+    if (!fs.existsSync(envPath)) return {}
+    return dotenv.parse(fs.readFileSync(envPath)) as TestEnv
+  } catch (_) {
+    return {}
   }
+}
 
-  const fileCreds = readCredentialsFromFile()
-  if (region && fileCreds) {
-    return { region, ...fileCreds }
-  }
+const testEnv = loadRunEnv()
+const prefix = testEnv.SSM_TEST_PREFIX || process.env.SSM_TEST_PREFIX || '/cli/test/'
 
-  return undefined
+function getAwsConfig() {
+  const region = testEnv.AWS_REGION || process.env.AWS_REGION
+  const accessKeyId = testEnv.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID
+  const secretAccessKey = testEnv.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY
+  
+  return region && accessKeyId && secretAccessKey 
+    ? { region, accessKeyId, secretAccessKey }
+    : undefined
 }
 
 describe('pushParameters() and pullParameters()', () => {
@@ -68,9 +65,6 @@ describe('pushParameters() and pullParameters()', () => {
 
   afterEach(async () => {
     if (!awsConfig) return
-    const names = ['DBNAME', 'DBUSER'].map((name) => prefix + name)
-
-    const client = createClient(awsConfig)
-    await client.send(new DeleteParametersCommand({ Names: names }))
+    await deleteParameters({ prefix, ...awsConfig })
   })
 })
