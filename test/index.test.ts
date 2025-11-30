@@ -38,20 +38,30 @@ function getAwsConfig() {
 }
 
 describe('pushParameters() and pullParameters()', () => {
-  const awsConfig = getAwsConfig()
-  const itOrSkip = awsConfig ? it : it.skip
+  const hasAwsConfig = (() => {
+    const region = testEnv.AWS_REGION || process.env.AWS_REGION
+    const accessKeyId = testEnv.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID
+    const secretAccessKey = testEnv.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY
+    return !!(region && accessKeyId && secretAccessKey)
+  })()
 
-  itOrSkip('Save and get parameters from Parameter Store', async () => {
+  const testFn = hasAwsConfig ? it : it.skip
+  testFn('Save and get parameters from Parameter Store', async () => {
+    const awsConfig = getAwsConfig()
+    if (!awsConfig) {
+      return
+    }
+
     const tempEnvFile = path.join(os.tmpdir(), `aws-ssm-cli-test-${Date.now()}.env`)
     fs.writeFileSync(tempEnvFile, 'DBNAME=postgres\nDBUSER=postgres\n')
 
     try {
-      await pushParameters({ prefix, file: tempEnvFile, ...awsConfig! })
+      await pushParameters({ prefix, file: tempEnvFile, ...awsConfig })
 
       // Wait for parameters to be available
       await delay(5_000)
 
-      const parameters = await pullParameters({ prefix, ...awsConfig! })
+      const parameters = await pullParameters({ prefix, ...awsConfig })
 
       expect(parameters).toEqual({ DBNAME: 'postgres', DBUSER: 'postgres' })
     } finally {
@@ -64,6 +74,7 @@ describe('pushParameters() and pullParameters()', () => {
   }, 10_000)
 
   afterEach(async () => {
+    const awsConfig = getAwsConfig()
     if (!awsConfig) return
     await deleteParameters({ prefix, ...awsConfig })
   })
