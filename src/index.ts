@@ -7,6 +7,7 @@ import { hideBin } from 'yargs/helpers'
 import { Pull, pullParameters } from './pull'
 import { Push, pushParameters } from './push'
 import { toDotenvString } from './dotenv'
+import { Delete, deleteParameters } from './delete'
 
 const clientOptions: Record<string, Options> = {
   region: {
@@ -81,6 +82,23 @@ yargs(hideBin(process.argv))
       }
     },
   })
+  .command({
+    command: 'delete',
+    describe: 'Delete environment variables from AWS SSM Parameter Store',
+    builder: (y) =>
+      y.options({
+        ...clientOptions,
+        prefix: {
+          alias: 'p',
+          type: 'string',
+          describe: 'Delete variables starting with prefix',
+          demandOption: true,
+        },
+      }),
+    handler: async (deleteArgs: ArgumentsCamelCase<Delete>) => {
+      await deleteParameters(deleteArgs)
+    },
+  })
   .check(({ prefix, file }) => {
     if (typeof prefix === 'string') {
       if (!prefix.startsWith('/')) {
@@ -106,6 +124,7 @@ yargs(hideBin(process.argv))
       'Push environment variables stored in .env file with prefix',
     ],
     ['pull --prefix="/<project>/<environment>/" --json', 'Pull environment variables by prefix'],
+    ['delete --prefix="/<project>/<environment>/"', 'Delete environment variables by prefix'],
   ])
   .demandCommand()
   .strictCommands()
