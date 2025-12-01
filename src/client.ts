@@ -28,15 +28,34 @@ export function addThrottleMiddleware(client: SSMClient, { batchSize, wait }: Th
   // https://aws.amazon.com/blogs/developer/middleware-stack-modular-aws-sdk-js/
   client.middlewareStack.add(
     (next) => async (args) => {
-      if (currentBatchSize > batchSize) {
-        currentBatchSize = 0
+      const maxRetries = 7
+      const baseDelayMs = 30
+      const maxDelayMs = 2_000
 
-        await delay(wait)
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          if (attempt === 0) {
+            if (currentBatchSize >= batchSize) {
+              currentBatchSize = 0
+              await delay(wait)
+            }
+            currentBatchSize++
+          }
+
+          return await next(args)
+        } catch (error: any) {
+          const isThrottle = error?.name === 'ThrottlingException' || error?.__type === 'ThrottlingException'
+          if (!isThrottle || attempt === maxRetries) {
+            throw error
+          }
+
+          const backoff = Math.min(maxDelayMs, baseDelayMs * 2 ** attempt)
+          const jitter = Math.floor(Math.random() * backoff)
+          await delay(jitter)
+        }
       }
 
-      currentBatchSize++
-
-      return await next(args)
+      throw new Error('Unexpected fallthrough in throttle middleware')
     },
     {
       step: 'initialize',
