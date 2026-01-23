@@ -47,7 +47,7 @@
     "@types/node": "16.18.126",
     "@types/yargs": "17.0.35",
     "cz-conventional-changelog": "3.3.0",
-    "husky": "7.0.4",
+    "husky": "9.1.7",
     "jest": "27.5.1",
     "prettier": "2.8.8",
     "semantic-release": "19.0.5",
